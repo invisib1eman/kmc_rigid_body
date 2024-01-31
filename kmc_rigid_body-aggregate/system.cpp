@@ -41,7 +41,7 @@ void System::Create()
     //Fill particles Use random permutation
     bool flag;
     H.clear();//init hbond list
-    int NPair=NMOL/2;
+    //int NPair=NMOL/2;
     
     int count=0;
     /*
@@ -89,7 +89,7 @@ void System::Create()
         H.push_back(hbond(2*i,2*i+1,0,3));
 
     }*/
-    for(int i=0; i<NMOL; i++)
+    /*for(int i=0; i<NMOL; i++)
     {
         Molecule m;
         m.MOL_ID=i;
@@ -109,9 +109,105 @@ void System::Create()
         A.L=L;
         Ag.push_back(A);
 
-    }
+    }*/
     //init a ring
+    vector<Molecule> ring;
+    Molecule m1;//initial test for 2NMOL bonded particles
+    m1.MOL_ID=0;
+    m1.AID=0;
+    m1.AsubID=0;
+    m1.centre=XYZ(5,5,5);
+    m1.gID=GridIndex_xyz(m1.centre,NGRID,GRIDL,L);
+    G[m1.gID].n+=1;
+    G[m1.gID].plist.push_back(m1.MOL_ID);
+    m1.orientation=angle_to_quarternion(M_PI/6,0,0);
+    m1.UpdateVertices();
+    m1.nbonds=1;
+    m1.vertype[0]='I';
+    M.push_back(m1);
+    Molecule m2;
+    m2.MOL_ID=1;
+    m2.AID=i;
+    m2.AsubID=1;
+    m2.centre=image((XYZ(2.26*sqrt(3)/2,2.26/2,1.06)+m1.centre),L);
+    m2.gID=GridIndex_xyz(m2.centre,NGRID,GRIDL,L);
+    G[m2.gID].n+=1;
+    G[m2.gID].plist.push_back(m2.MOL_ID);
+    m2.orientation=angle_to_quarternion(M_PI/2,0,0);
+    m2.UpdateVertices();
+    m2.nbonds=1;
+    m2.vertype[3]='I';
+    M.push_back(m2);
+    Molecule m3;
+    m3.MOL_ID=2;
+    
+    m3.AID=0;
+    m3.AsubID=2;
+    m3.centre=image((XYZ(2.26*sqrt(3)/2,2.26*3/2,0)+m1.centre),L);
+    m3.gID=GridIndex_xyz(m3.centre,NGRID,GRIDL,L);
+    G[m3.gID].n+=1;
+    G[m3.gID].plist.push_back(m3.MOL_ID);
+    m3.orientation=angle_to_quarternion(M_PI/6,0,0);
+    m3.UpdateVertices();
+    m3.nbonds=1;
+    m3.vertype[0]='I';
+    M.push_back(m3);
+    Molecule m4;
+    m4.MOL_ID=3;
+    m4.AID=0;
+    m4.AsubID=3;
+    m4.centre=image((XYZ(-2.26*sqrt(3)/2,2.26*3/2,0)+m2.centre),L);
+    m4.gID=GridIndex_xyz(m4.centre,NGRID,GRIDL,L);
+    G[m4.gID].n+=1;
+    G[m4.gID].plist.push_back(m4.MOL_ID);
+    m4.orientation=angle_to_quarternion(M_PI/2,0,0);
+    m4.UpdateVertices();
+    m4.nbonds=1;
+    m4.vertype[3]='I';
+    M.push_back(m4);
+    Molecule m5;
+    m5.MOL_ID=4;
+    m5.AID=0;
+    m5.AsubID=4;
+    m5.centre=image((XYZ(-2.26*sqrt(3)/2,2.26*3/2,0)+m1.centre),L);
+    m5.gID=GridIndex_xyz(m5.centre,NGRID,GRIDL,L);
+    G[m5.gID].n+=1;
+    G[m5.gID].plist.push_back(m5.MOL_ID);
+    m5.orientation=angle_to_quarternion(M_PI/6,0,0);
+    m5.UpdateVertices();
+    m5.nbonds=1;
 
+    m5.vertype[0]='I';
+    M.push_back(m5);
+    Molecule m6;
+    m6.MOL_ID=5;
+    m6.AID=0;
+    m6.AsubID=5;
+    m6.centre=image((XYZ(-2.26*sqrt(3),0,0)+m2.centre),L);
+    m6.gID=GridIndex_xyz(m6.centre,NGRID,GRIDL,L);
+    G[m6.gID].n+=1;
+    G[m6.gID].plist.push_back(m6.MOL_ID);
+    m6.orientation=angle_to_quarternion(M_PI/2,0,0);
+    m6.UpdateVertices();
+    m6.nbonds=1;
+    m6.vertype[3]='I';
+    M.push_back(m6);
+    ring.push_back(m1);
+    ring.push_back(m2);
+    ring.push_back(m3);
+    ring.push_back(m4);
+    ring.push_back(m5);
+    ring.push_back(m6);
+    for(int i=0;i<6;i++)
+    {
+        Molecule new_molecule=ring[i];
+        new_molecule.MOL_ID=6+i;
+        new_molecule.AsubID=6+i;
+        new_molecule.centre=image((XYZ(0,0,1.06*2)+new_molecule.centre),L);
+        new_molecule.UpdateVertices();
+        M.push_back(new_molecule);
+    }
+    NMOL=12;
 }
 
 void System::WriteMol2(int timestep)
